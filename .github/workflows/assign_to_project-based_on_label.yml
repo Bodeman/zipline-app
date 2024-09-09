@@ -19,7 +19,7 @@ jobs:
     - name: Check label
       run: |
         echo "Triggered label: ${{ github.event.label.name }}"
-        echo "Expected label: your-specific-label"
+        echo "Expected label: team:design"
 
     - name: Assign to project
       if: github.event.label.name == 'team:design'
