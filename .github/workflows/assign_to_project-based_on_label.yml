@@ -5,30 +5,22 @@ on:
     types: [labeled]
 
 env:
-  PROJECT_NUMBER: YOUR_PROJECT_NUMBER  # Replace with your project number
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PROJECT_NUMBER: 3  # Replace with your project number
 
 jobs:
-  assign_to_project:
+  assign-to-project:
     runs-on: ubuntu-latest
     steps:
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
-
-    - name: Check label
-      run: |
-        echo "Triggered label: ${{ github.event.label.name }}"
-        echo "Expected label: team:design"
-
-    - name: Assign to project
-      if: github.event.label.name == 'team:design'
+    - name: Assign issue to project
+      if: github.event.label.name == 'team:design'  # Replace with your label name
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
         ORGANIZATION: ${{ github.repository_owner }}
         REPOSITORY: ${{ github.repository }}
       run: |
-        echo "Attempting to assign issue to project"
+        echo "Assigning issue to project..."
         
         # Get project ID
         project_id=$(gh api graphql -f query='
@@ -44,13 +36,13 @@ jobs:
         
         # Get issue node ID
         issue_node_id=$(gh api graphql -f query='
-          query($repo: String!, $number: Int!) {
-            repository(owner: "${{ github.repository_owner }}", name: $repo) {
+          query($org: String!, $repo: String!, $number: Int!) {
+            repository(owner: $org, name: $repo) {
               issue(number: $number) {
                 id
               }
             }
-          }' -f repo=${{ github.event.repository.name }} -f number=${{ github.event.issue.number }} --jq '.data.repository.issue.id')
+          }' -f org=$ORGANIZATION -f repo=$REPOSITORY -f number=$ISSUE_NUMBER --jq '.data.repository.issue.id')
         
         echo "Issue Node ID: $issue_node_id"
         
@@ -64,11 +56,4 @@ jobs:
             }
           }' -f project=$project_id -f issue=$issue_node_id
         
-        echo "Issue added to project"
-
-    - name: Log assignment attempt
-      if: always()
-      run: |
-        echo "Label condition met: ${{ github.event.label.name == 'team:design' }}"
-        echo "Issue Number: ${{ github.event.issue.number }}"
-        echo "Project Number: ${{ env.PROJECT_NUMBER }}"
+        echo "Issue assigned to project successfully"
