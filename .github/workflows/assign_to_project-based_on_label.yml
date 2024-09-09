@@ -6,7 +6,7 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  PROJECT_NUMBER: 3  # Replace with your project number
+  PROJECT_NUMBER: 3  # Replace with your actual project number
 
 jobs:
   assign-to-project:
@@ -21,6 +21,10 @@ jobs:
         REPOSITORY: ${{ github.repository }}
       run: |
         echo "Assigning issue to project..."
+        echo "Organization: $ORGANIZATION"
+        echo "Repository: $REPOSITORY"
+        echo "Issue Number: $ISSUE_NUMBER"
+        echo "Project Number: $PROJECT_NUMBER"
         
         # Get project ID
         project_id=$(gh api graphql -f query='
@@ -30,8 +34,12 @@ jobs:
                 id
               }
             }
-          }' -f org=$ORGANIZATION -f number=$PROJECT_NUMBER --jq '.data.organization.projectV2.id')
+          }' -f org=$ORGANIZATION -F number=$PROJECT_NUMBER --jq '.data.organization.projectV2.id')
         
+        if [ -z "$project_id" ]; then
+          echo "Failed to fetch project ID. Make sure the project number is correct and you have the necessary permissions."
+          exit 1
+        fi
         echo "Project ID: $project_id"
         
         # Get issue node ID
@@ -42,18 +50,27 @@ jobs:
                 id
               }
             }
-          }' -f org=$ORGANIZATION -f repo=$REPOSITORY -f number=$ISSUE_NUMBER --jq '.data.repository.issue.id')
+          }' -f org=$ORGANIZATION -f repo=${REPOSITORY#*/} -F number=$ISSUE_NUMBER --jq '.data.repository.issue.id')
         
+        if [ -z "$issue_node_id" ]; then
+          echo "Failed to fetch issue node ID. Make sure the issue number is correct."
+          exit 1
+        fi
         echo "Issue Node ID: $issue_node_id"
         
         # Add issue to project
-        gh api graphql -f query='
+        result=$(gh api graphql -f query='
           mutation($project:ID!, $issue:ID!) {
             addProjectV2ItemById(input: {projectId: $project, contentId: $issue}) {
               item {
                 id
               }
             }
-          }' -f project=$project_id -f issue=$issue_node_id
+          }' -f project=$project_id -f issue=$issue_node_id)
         
-        echo "Issue assigned to project successfully"
+        if echo "$result" | jq -e '.errors' > /dev/null; then
+          echo "Error adding issue to project: $(echo "$result" | jq -r '.errors[0].message')"
+          exit 1
+        else
+          echo "Issue assigned to project successfully"
+        fi
