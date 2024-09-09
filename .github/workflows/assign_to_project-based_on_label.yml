@@ -1,76 +1,33 @@
-name: Assign Issue to Project
+name: Assign Issue to Project on Label
 
 on:
   issues:
     types: [labeled]
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  PROJECT_NUMBER: 3  # Your project number
-
 jobs:
-  assign-to-project:
+  assign_issue_to_project:
+    if: contains(github.event.label.name, 'team:design')
     runs-on: ubuntu-latest
     steps:
-    - name: Assign issue to project
-      if: github.event.label.name == 'team:design'  # Replace with your label name
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        ISSUE_NUMBER: ${{ github.event.issue.number }}
-        OWNER: ${{ github.repository_owner }}
-        REPOSITORY: ${{ github.repository }}
-      run: |
-        echo "Assigning issue to project..."
-        echo "Owner: $OWNER"
-        echo "Repository: $REPOSITORY"
-        echo "Issue Number: $ISSUE_NUMBER"
-        echo "Project Number: $PROJECT_NUMBER"
-        
-        # Get project ID
-        project_id=$(gh api graphql -f query='
-          query($owner: String!, $number: Int!) {
-            user(login: $owner){
-              projectV2(number: $number) {
-                id
+      - name: Assign issue to project
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const projectId = '3';  // Add your project ID here
+            const contentId = context.payload.issue.node_id;
+
+            // GraphQL mutation to add the issue to the project
+            const mutation = `
+            mutation ($projectId: ID!, $contentId: ID!) {
+              addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                item {
+                  id
+                }
               }
-            }
-          }' -f owner=$OWNER -F number=$PROJECT_NUMBER --jq '.data.user.projectV2.id')
-        
-        if [ -z "$project_id" ]; then
-          echo "Failed to fetch project ID. Make sure the project number is correct and you have the necessary permissions."
-          exit 1
-        fi
-        echo "Project ID: $project_id"
-        
-        # Get issue node ID
-        issue_node_id=$(gh api graphql -f query='
-          query($owner: String!, $repo: String!, $number: Int!) {
-            repository(owner: $owner, name: $repo) {
-              issue(number: $number) {
-                id
-              }
-            }
-          }' -f owner=$OWNER -f repo=${REPOSITORY#*/} -F number=$ISSUE_NUMBER --jq '.data.repository.issue.id')
-        
-        if [ -z "$issue_node_id" ]; then
-          echo "Failed to fetch issue node ID. Make sure the issue number is correct."
-          exit 1
-        fi
-        echo "Issue Node ID: $issue_node_id"
-        
-        # Add issue to project
-        result=$(gh api graphql -f query='
-          mutation($project:ID!, $issue:ID!) {
-            addProjectV2ItemById(input: {projectId: $project, contentId: $issue}) {
-              item {
-                id
-              }
-            }
-          }' -f project=$project_id -f issue=$issue_node_id)
-        
-        if echo "$result" | jq -e '.errors' > /dev/null; then
-          echo "Error adding issue to project: $(echo "$result" | jq -r '.errors[0].message')"
-          exit 1
-        else
-          echo "Issue assigned to project successfully"
-        fi
+            }`;
+
+            await github.graphql(mutation, {
+              projectId: projectId,
+              contentId: contentId
+            });
