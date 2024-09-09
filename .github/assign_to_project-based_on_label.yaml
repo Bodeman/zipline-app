@@ -1,0 +1,21 @@
+name: Assign Issue to Project
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  assign_to_project:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Assign to project
+      uses: actions/github-script@v6
+      if: github.event.label.name == 'team:design'
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.rest.projects.createCard({
+            project_id: 3,
+            content_id: context.payload.issue.id,
+            content_type: 'Issue'
+          })
