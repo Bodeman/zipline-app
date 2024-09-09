@@ -5,7 +5,7 @@ on:
     types: [labeled]
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PROJECT_NUMBER: YOUR_PROJECT_NUMBER  # Replace with your project number
 
 jobs:
   assign_to_project:
@@ -23,26 +23,52 @@ jobs:
 
     - name: Assign to project
       if: github.event.label.name == 'team:design'
-      uses: actions/github-script@v6
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          console.log('Attempting to assign issue to project');
-          try {
-            const result = await github.rest.projects.createCard({
-              project_id: 3,
-              content_id: context.payload.issue.id,
-              content_type: 'Issue'
-            });
-            console.log('Project assignment result:', result);
-          } catch (error) {
-            console.error('Error assigning to project:', error);
-            core.setFailed(error.message);
-          }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ORGANIZATION: ${{ github.repository_owner }}
+        REPOSITORY: ${{ github.repository }}
+      run: |
+        echo "Attempting to assign issue to project"
+        
+        # Get project ID
+        project_id=$(gh api graphql -f query='
+          query($org: String!, $number: Int!) {
+            organization(login: $org){
+              projectV2(number: $number) {
+                id
+              }
+            }
+          }' -f org=$ORGANIZATION -f number=$PROJECT_NUMBER --jq '.data.organization.projectV2.id')
+        
+        echo "Project ID: $project_id"
+        
+        # Get issue node ID
+        issue_node_id=$(gh api graphql -f query='
+          query($repo: String!, $number: Int!) {
+            repository(owner: "${{ github.repository_owner }}", name: $repo) {
+              issue(number: $number) {
+                id
+              }
+            }
+          }' -f repo=${{ github.event.repository.name }} -f number=${{ github.event.issue.number }} --jq '.data.repository.issue.id')
+        
+        echo "Issue Node ID: $issue_node_id"
+        
+        # Add issue to project
+        gh api graphql -f query='
+          mutation($project:ID!, $issue:ID!) {
+            addProjectV2ItemById(input: {projectId: $project, contentId: $issue}) {
+              item {
+                id
+              }
+            }
+          }' -f project=$project_id -f issue=$issue_node_id
+        
+        echo "Issue added to project"
 
     - name: Log assignment attempt
       if: always()
       run: |
-        echo "Label condition met: ${{ github.event.label.name == 'your-specific-label' }}"
-        echo "Issue ID: ${{ github.event.issue.id }}"
-        echo "Project ID: 3"
+        echo "Label condition met: ${{ github.event.label.name == 'team:design' }}"
+        echo "Issue Number: ${{ github.event.issue.number }}"
+        echo "Project Number: ${{ env.PROJECT_NUMBER }}"
