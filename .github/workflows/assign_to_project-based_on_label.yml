@@ -4,18 +4,45 @@ on:
   issues:
     types: [labeled]
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   assign_to_project:
     runs-on: ubuntu-latest
     steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
+    - name: Check label
+      run: |
+        echo "Triggered label: ${{ github.event.label.name }}"
+        echo "Expected label: your-specific-label"
+
     - name: Assign to project
+      if: github.event.label.name == 'your-specific-label'
       uses: actions/github-script@v6
-      if: github.event.label.name == 'team:design'
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          github.rest.projects.createCard({
-            project_id: 3,
-            content_id: context.payload.issue.id,
-            content_type: 'Issue'
-          })
+          console.log('Attempting to assign issue to project');
+          try {
+            const result = await github.rest.projects.createCard({
+              project_id: 3,
+              content_id: context.payload.issue.id,
+              content_type: 'Issue'
+            });
+            console.log('Project assignment result:', result);
+          } catch (error) {
+            console.error('Error assigning to project:', error);
+            core.setFailed(error.message);
+          }
+
+    - name: Log assignment attempt
+      if: always()
+      run: |
+        echo "Label condition met: ${{ github.event.label.name == 'your-specific-label' }}"
+        echo "Issue ID: ${{ github.event.issue.id }}"
+        echo "Project ID: 3"
