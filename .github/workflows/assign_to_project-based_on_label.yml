@@ -22,7 +22,7 @@ jobs:
         echo "Expected label: your-specific-label"
 
     - name: Assign to project
-      if: github.event.label.name == 'your-specific-label'
+      if: github.event.label.name == 'team:design'
       uses: actions/github-script@v6
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
