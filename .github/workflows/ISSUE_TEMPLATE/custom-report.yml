@@ -1,0 +1,105 @@
+name: Custom Report
+description: Request for a custom report
+title: "Custom Report Request for [Question Being Answered]>"
+labels: ["feat:custom-reports", "team:data", "operations"]
+assignees:
+  - data-team-lead
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this custom report request. Please provide as much detail as possible to help us process your request efficiently.
+
+  - type: textarea
+    id: report-description
+    attributes:
+      label: Report Request Description
+      description: Add a two-sentence summary of the custom report request.
+      placeholder: We need a report that shows...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: product-area
+    attributes:
+      label: Product Area
+      description: Select the primary product area for this report.
+      options:
+        - Publisher
+        - Field
+        - Communications
+        - Assessments
+        - Surveys
+        - Groups
+        - Messenger
+        - Other (please specify in Additional Context)
+    validations:
+      required: true
+
+  - type: textarea
+    id: similar-report
+    attributes:
+      label: Similar Reports
+      description: Have we produced a similar report in the past? If yes, please provide details.
+      placeholder: Yes, we have a similar report that...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platforms or Devices
+      description: Select all platforms or devices that are relevant for this report.
+      options:
+        - label: Desktop
+        - label: Mobile Web
+        - label: iOS App
+        - label: Android App
+
+  - type: textarea
+    id: urgency
+    attributes:
+      label: Urgency and Context
+      description: Please provide information about the urgency and context of this request.
+      placeholder: |
+        - Is this a customer commitment? 
+        - Is there a risk to a deal / extension?
+        - How soon do you need a response?
+        - Should this report be saved or automated via email for a customer?
+    validations:
+      required: true
+
+  - type: textarea
+    id: columns-info
+    attributes:
+      label: Required Information and Columns
+      description: Provide examples of columns or information required in the report.
+      placeholder: |
+        Examples of columns:
+        - org shortname
+        - Communication Reference ID
+        - first_read_at
+        - last_read_at
+        - team_id
+        - team_name
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual-aids
+    attributes:
+      label: Loom or Screenshots
+      description: If you have a screenshot or Loom video discussing the report, please share it here.
+      placeholder: Paste links or upload files here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the request.
+      placeholder: Any additional details that might be helpful...
+    validations:
+      required: false
