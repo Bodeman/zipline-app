@@ -2,6 +2,10 @@ name: Design System Issue
 description: Report inconsistencies between the Cable DS in Figma and production
 title: "[Design System]: "
 labels: ["design-system-review", "triage"]
+assignees:
+  - bodeman
+#team_assignees:
+#  - retailzipline/design
 
 body:
   - type: markdown

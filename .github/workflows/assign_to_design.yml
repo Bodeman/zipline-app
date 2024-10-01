@@ -1,15 +1,19 @@
 name: Assign to Project
 
 on:
-  issues:
+    issues:
     types: [opened]
 
 jobs:
-  assign_to_project:
+    assign_to_project:
     runs-on: ubuntu-latest
     steps:
-      - name: Assign issue to project
-        uses: actions/add-to-project@v0.5.0
+        - name: Dump GitHub context
+          env:
+            GITHUB_CONTEXT: ${{ toJson(github) }}
+          run: echo "$GITHUB_CONTEXT"
+        - name: Assign issue to project
+            uses: actions/add-to-project@v0.5.0
         with:
-          project-url: https://github.com/users/Bodeman/projects/3
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+            project-url: https://github.com/users/Bodeman/projects/3
+            github-token: ${{ secrets.GITHUB_TOKEN }}
