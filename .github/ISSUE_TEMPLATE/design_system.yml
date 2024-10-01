@@ -1,0 +1,60 @@
+name: Design System Issue
+description: Report inconsistencies between the Cable DS in Figma and production
+title: "[Design System]: "
+labels: ["design-system-review", "triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a design system inconsistency. Please fill out this form as completely as possible.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary Description
+      description: Add a two-sentence summary of the problem.
+      placeholder: There is an inconsistency between...
+    validations:
+      required: true
+
+  - type: input
+    id: staging-url
+    attributes:
+      label: Staging URL
+      description: Provide the URL where the broken component can be seen.
+      placeholder: https://staging.example.com/page-with-issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual-evidence
+    attributes:
+      label: Loom or Screenshots
+      description: Please provide a short Loom video or screenshots showcasing the bug on Production or Staging.
+      placeholder: Paste your Loom link or upload screenshots here.
+    validations:
+      required: true
+
+  - type: input
+    id: figma-link
+    attributes:
+      label: Figma Link
+      description: If you already have this in Cable, please link to the specific component in Figma.
+      placeholder: https://www.figma.com/file/...
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps To Reproduce
+      description: Provide steps to reproduce the behavior, including user login and permissions context.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. User logged in as: ...
+        5. User permissions: ...
+    validations:
+      required: true
