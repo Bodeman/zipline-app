@@ -12,7 +12,7 @@ jobs:
       - name: Assign issue to project
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const projectNumber = 3;  // Your project number
             const username = 'Bodeman';  // Your GitHub username
