@@ -11,5 +11,5 @@ jobs:
       - name: Assign issue to project
         uses: actions/add-to-project@v0.5.0
         with:
-          project-url: https://github.com/users/Bodeman/projects/3
+          project-url: https://github.com/users/Bodeman/projects/3/views/1
           github-token: ${{ secrets.GITHUB_TOKEN }}
