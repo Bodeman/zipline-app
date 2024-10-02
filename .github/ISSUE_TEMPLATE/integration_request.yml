@@ -8,10 +8,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Request Information
+        ## Integration Request
         Please refer to the [Integrations Overview](https://docs.google.com/document/d/1r2Kfcs_S_Djw40A_guKJKdW7FffhLNX3uoU2paRvR3Q/edit?pli=1) for setup guides and features. Instructions at the bottom of this document.
-
-        **To Do:**
   - type: checkboxes
     attributes:
       label: To Do
@@ -19,12 +17,7 @@ body:
       options:
         - label: Integration overview sent
         - label: Setup guide sent and executed on the customer side
-
-  - type: input
-    attributes:
-      label: Customer
-      description: Insert customer name
-      placeholder: '[Insert customer name]'
+        - label: Added relevant c:companyname label to this github issue
 
   - type: input
     attributes:
