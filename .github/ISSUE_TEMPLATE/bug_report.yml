@@ -1,0 +1,58 @@
+name: Bug report
+description: File a bug report
+title: 'BUG: '
+labels: ['bug', 'triage']
+
+body:
+  - type: input
+    attributes:
+      label: Summary Description
+      description: Add a two-sentence summary of the problem.
+      placeholder: 'Provide a short summary'
+
+  - type: textarea
+    attributes:
+      label: Product Area
+      description: Is it in Publisher, Field, Communications, Assessments, Surveys, Groups, Messenger, etc?
+      placeholder: 'Mention the product area'
+
+  - type: textarea
+    attributes:
+      label: Platform
+      description: Is it on Desktop, Mobile Web, iOS app, or Android app?
+      placeholder: 'Specify the platform'
+
+  - type: markdown
+    attributes:
+      value: |
+        **Urgency**
+        - Is this an existing or a pilot customer, or a demo?
+        - Is this critical? Is there a workaround you know about?
+        - Is this a customer commitment? Is there a risk to a deal/extension?
+        - How many users or customers seem to be affected?
+
+  - type: input
+    attributes:
+      label: Urgency Details
+      description: Answer the questions regarding urgency.
+      placeholder: 'Provide urgency details'
+
+  - type: markdown
+    attributes:
+      value: |
+        **To Reproduce**
+        Steps to reproduce the behavior:
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: List the steps to reproduce the bug
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
