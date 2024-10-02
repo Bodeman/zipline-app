@@ -1,0 +1,95 @@
+name: Integration Request
+description: Request an integration
+title: 'Integration Request: Title'
+labels: ['team:extend']
+projects: ['Implementations', 'Extend']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Request Information
+        Please refer to the [Integrations Overview](https://docs.google.com/document/d/1r2Kfcs_S_Djw40A_guKJKdW7FffhLNX3uoU2paRvR3Q/edit?pli=1) for setup guides and features. Instructions at the bottom of this document.
+
+        **To Do:**
+  - type: checkboxes
+    attributes:
+      label: To Do
+      description: Please complete the following tasks
+      options:
+        - label: Integration overview sent
+        - label: Setup guide sent and executed on the customer side
+
+  - type: input
+    attributes:
+      label: Customer
+      description: Insert customer name
+      placeholder: '[Insert customer name]'
+
+  - type: input
+    attributes:
+      label: Due Date
+      description: Insert due date
+      placeholder: '[Insert date]'
+
+  - type: textarea
+    attributes:
+      label: Comments
+      description: Add any additional comments or context
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Learning
+  - type: checkboxes
+    attributes:
+      label: Learning Integrations
+      description: Select the applicable learning integrations
+      options:
+        - label: Adobe Captivate - Courses Widget
+        - label: Docebo - Courses Widget
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Customer Experience
+  - type: checkboxes
+    attributes:
+      label: Customer Experience Integrations
+      description: Select the applicable customer experience integrations
+      options:
+        - label: Medallia - Customer Scores Widget
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Service Desk
+  - type: checkboxes
+    attributes:
+      label: Service Desk Integrations
+      description: Select the applicable service desk integrations
+      options:
+        - label: Service Channel - Tickets Widget
+        - label: Service Channel - Create a Ticket
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Knowledge Base
+  - type: checkboxes
+    attributes:
+      label: Knowledge Base Integrations
+      description: Select the applicable knowledge base integrations
+      options:
+        - label: ServiceNow - Doc Sync
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Workforce Management
+  - type: checkboxes
+    attributes:
+      label: Workforce Management Integrations
+      description: Select the applicable workforce management integrations
+      options:
+        - label: Legion - Schedules
